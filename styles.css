@@ -609,3 +609,9 @@ kbd { font: 600 11px var(--body); padding: 2px 6px; border-radius: 4px; border: 
 .mh-inner > .live { margin-left: -14px; flex: none; }
 @media (max-width: 900px) { .mh-inner > .live { margin-left: 0; align-self: center; margin-bottom: 8px; } }
 @media (max-width: 480px) { .brand-word { display: none; } .mh-inner { gap: 8px; } .join { padding: 0 9px !important; } }
+
+/* head coach */
+.coach-row { padding: 14px 16px; }
+.coach-tag { color: var(--gold) !important; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: 11px !important; }
+.hero .k .role { background: rgba(255,255,255,.18); padding: 2px 8px; border-radius: 4px; letter-spacing: .1em; }
+.hero.light .k .role { background: rgba(21,18,28,.1); }

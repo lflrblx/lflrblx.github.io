@@ -418,6 +418,12 @@
             <span class="opp"><span class="vs">vs</span>${mark(r.opp, "sm")}<span>${esc(r.opp)}</span></span>
             <span class="res"><i class="${r.res}">${r.res}</i>${r.pf}–${r.pa}</span></a>`).join("") : `<div class="empty-mini">No games yet.</div>`}</div></section>
         <aside class="card">
+          ${t.coach ? (() => {
+            const c = t.coach, p = D.players[c.key];
+            const pic = p ? hs(c.key, c.name, "md") : `<span class="hs md">${c.avatar ? `<img src="${esc(c.avatar)}" alt="">` : esc(c.name.slice(0, 2).toUpperCase())}</span>`;
+            const inner = `${pic}<span class="who"><small class="coach-tag">Head coach</small><b>${esc(c.name)}</b>${p ? `<small>${fmt(p.pts)} PTS as a player</small>` : ""}</span>`;
+            return `<div class="rail-head"><h3>Head coach</h3></div>` + (p ? `<a class="rail-row coach-row" href="${playerHref(c.key)}" data-link>${inner}</a>` : `<div class="rail-row coach-row">${inner}</div>`);
+          })() : ""}
           <div class="rail-head"><h3>Team leaders</h3></div>
           ${D.tabs.filter((x) => t.leaders[x.key]).map((x) => { const l = t.leaders[x.key]; return `<a class="rail-row" href="${playerHref(l.key)}" data-link><span class="pos">${x.pos}</span>${hs(l.key, l.player)}<span class="who"><b>${esc(l.player)}</b><small>${esc(l.phrase)}</small></span><span class="v">${fmt(l.pts)}<small>PTS</small></span></a>`; }).join("") || `<div class="empty-mini">No leaders yet.</div>`}
         </aside>
@@ -445,7 +451,7 @@
         <a class="crumb" href="/stats/qb" data-link>${BACK} Stat leaders</a>
         <section ${heroAttr(t && t.color)}>
           ${hs(key, p.name, "xl")}
-          <div><div class="k">${p.team ? teamLink(p.team) : "Free agent"}${tabsHere.length ? " · " + tabsHere.map((x) => x.pos).join(" / ") : ""}</div><h1 class="nocase">${esc(p.name)}</h1></div>
+          <div><div class="k">${p.team ? teamLink(p.team) : "Free agent"}${p.role ? ` · <span class="role">${esc(p.role)}</span>` : ""}${tabsHere.length ? " · " + tabsHere.map((x) => x.pos).join(" / ") : ""}</div><h1 class="nocase">${esc(p.name)}</h1></div>
           <div class="big">${fmt(curPts)}<small>Season ${s} PTS</small></div>
         </section>
         <div class="statbar" style="margin-top:12px">
