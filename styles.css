@@ -660,3 +660,19 @@ kbd { font: 600 11px var(--body); padding: 2px 6px; border-radius: 4px; border: 
   .ko-logo .mark.md { width: 26px; height: 26px; }
   .field, .steps3 { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* scores: matchups in the field */
+.mu { display: block; padding: 10px 16px; border-bottom: 1px solid var(--line); transition: background .15s; }
+.mu:last-child { border-bottom: 0; }
+a.mu:hover { background: var(--sunk); }
+.mu-team { display: flex; align-items: center; gap: 10px; height: 32px; }
+.mu-team .mark { width: 26px; height: 26px; font-size: 10px; }
+.mu-team .nm { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mu-team .sc { font-family: var(--display); font-weight: 700; font-size: 20px; min-width: 26px; text-align: right; }
+.mu-team.w .nm, .mu-team.w .sc { font-weight: 800; color: var(--ink); }
+.mu-team.l .nm, .mu-team.l .sc { color: var(--muted); font-weight: 500; }
+.mu-foot { display: flex; align-items: center; gap: 8px; margin-top: 4px; font: 600 11px var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.mu-foot .fin { color: var(--ink); }
+.mu-foot .up { color: var(--brand); }
+.mu-foot .go { margin-left: auto; font-size: 12px; letter-spacing: 0; text-transform: none; }
+.mu-tag { padding: 1px 6px; border-radius: 4px; background: var(--sunk); border: 1px solid var(--line); letter-spacing: .04em; }

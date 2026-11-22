@@ -340,14 +340,62 @@
   // ---------- scores
   function scoresPage() {
     const s = D.league.season;
-    const games = D.games.filter((g) => g.season === s);
-    const weeks = [...new Set(games.map((g) => g.week))].sort((a, b) => weekNum(a) - weekNum(b));
-    const wk = weeks.includes(state.week) ? state.week : weeks[weeks.length - 1];
-    const list = games.filter((g) => g.week === wk);
+    const weeks = (D.schedule || []);
+    const played = (w) => w.matchups.some((m) => m.hs != null && m.as != null);
+    const pick = weeks.find((w) => w.week === state.week)
+      || [...weeks].reverse().find(played) || weeks[0];
+    const anyFinal = weeks.some(played);
     return page(`
       <div class="pagehead"><div><div class="kick">Season ${s}</div><h1>Scores</h1></div></div>
-      ${weeks.length ? `<div><nav class="utabs">${weeks.map((w) => `<button class="${w === wk ? "is-on" : ""}" data-week="${esc(w)}">${esc(w)}</button>`).join("")}<span class="bar"></span></nav>
-        <div class="games" style="margin-top:16px">${list.map(gameCard).join("")}</div></div>` : kickoff(true)}`);
+      ${anyFinal ? "" : kickoff(false)}
+      ${weeks.length ? `<section>
+          <nav class="utabs">${weeks.map((w) => `<button class="${w === pick ? "is-on" : ""}" data-week="${esc(w.week)}">${esc(w.week)}</button>`).join("")}<span class="bar"></span></nav>
+          <div class="sh" style="margin-top:18px"><h2>The field</h2><span class="sub">${esc(pick.week)} · ${pick.matchups.length} game${pick.matchups.length !== 1 ? "s" : ""}</span></div>
+          ${fieldMatchups(pick)}
+        </section>`
+        : `<section><div class="sh"><h2>The field</h2><span class="sub">Matchups and final scores appear here once the schedule is posted</span></div>
+          ${fieldTeams()}</section>`}
+      ${anyFinal ? "" : howScores()}`);
+  }
+
+  // the four conference columns, listing each matchup (and its final once played)
+  function fieldMatchups(w) {
+    const confOf = (name) => (teamBy(name) || {}).conf || "";
+    const cols = (D.conferences || []).map((c) => ({ name: c.name, games: [] }));
+    const other = { name: "Other", games: [] };
+    for (const m of w.matchups) (cols.find((c) => c.name === confOf(m.home)) || other).games.push(m);
+    if (other.games.length) cols.push(other);
+    const side = (name, sc, win, lose) => `<div class="mu-team ${win ? "w" : ""} ${lose ? "l" : ""}">${mark(name)}<span class="nm">${esc(name)}</span><span class="sc">${sc ?? ""}</span></div>`;
+    const card = (c, m) => {
+      const done = m.hs != null && m.as != null;
+      const hw = done && m.hs > m.as, aw = done && m.as > m.hs;
+      const xc = confOf(m.away) && confOf(m.away) !== c.name ? `<span class="mu-tag">vs ${esc(confOf(m.away))}</span>` : "";
+      const body = `${side(m.away, done ? m.as : null, aw, done && !aw && hw)}${side(m.home, done ? m.hs : null, hw, done && !hw && aw)}
+        <div class="mu-foot">${done ? `<span class="fin">Final</span>` : `<span class="up">Upcoming</span>`}${xc}${m.game_id ? `<span class="go">Box score ${ARW}</span>` : ""}</div>`;
+      return m.game_id ? `<a class="mu rp" href="${gameHref(m.game_id)}" data-link>${body}</a>` : `<div class="mu">${body}</div>`;
+    };
+    return `<div class="field">${cols.map((c) => `<div class="card field-conf">
+        <div class="conf-head"><h3>${esc(c.name)}</h3><span class="sub">${c.games.length} game${c.games.length !== 1 ? "s" : ""}</span></div>
+        ${c.games.length ? c.games.map((m) => card(c, m)).join("") : `<div class="empty-mini">No ${esc(c.name)} home games this week.</div>`}
+      </div>`).join("")}</div>`;
+  }
+
+  // before the schedule exists: just the teams, by conference (no records)
+  function fieldTeams() {
+    const confs = (D.conferences || []).map((c) => ({ name: c.name, teams: confTeams(c) }));
+    return `<div class="field">${confs.map((c) => `<div class="card field-conf">
+        <div class="conf-head"><h3>${esc(c.name)}</h3><span class="sub">${c.teams.length} teams</span></div>
+        ${c.teams.map((t) => `<a class="field-team rp" href="/team/${t.id}" data-link>${mark(t.name, "md")}<span class="nm">${esc(t.name)}</span></a>`).join("")}
+      </div>`).join("")}</div>`;
+  }
+
+  function howScores() {
+    return `<section><div class="sh"><h2>How scores get here</h2></div>
+        <div class="steps3">
+          <div class="card step"><span class="n">1</span><b>Final whistle</b><p>The game ends in Roblox and the ref screenshots each stats tab.</p></div>
+          <div class="card step"><span class="n">2</span><b>Ref posts it</b><p>One <code>/stats</code> in Discord with the teams, score, week and screenshots.</p></div>
+          <div class="card step"><span class="n">3</span><b>Live on the site</b><p>About a minute later: score, box score, standings, leaders and the Heisman race.</p></div>
+        </div></section>`;
   }
 
   function kickoff(full) {
@@ -367,19 +415,7 @@
           ${confs.flatMap((c) => c.teams).slice(0, 16).map((t, i) => `<span class="ko-logo" style="--i:${i}">${mark(t.name, "md")}</span>`).join("")}
         </div>
       </section>`;
-    if (!full) return banner;
-    return `${banner}
-      ${confs.length ? `<section><div class="sh"><h2>The field</h2><span class="sub">16 teams · 4 conferences</span></div>
-        <div class="field">${confs.map((c) => `<div class="card field-conf">
-          <div class="conf-head"><h3>${esc(c.name)}</h3><span class="sub">${c.teams.length} teams</span></div>
-          ${c.teams.map((t) => `<a class="field-team rp" href="/team/${t.id}" data-link>${mark(t.name, "md")}<span class="nm">${esc(t.name)}</span><span class="rec">${recOf(t)}</span></a>`).join("")}
-        </div>`).join("")}</div></section>` : ""}
-      <section><div class="sh"><h2>How scores get here</h2></div>
-        <div class="steps3">
-          <div class="card step"><span class="n">1</span><b>Final whistle</b><p>The game ends in Roblox and the ref screenshots each stats tab.</p></div>
-          <div class="card step"><span class="n">2</span><b>Ref posts it</b><p>One <code>/stats</code> in Discord with the teams, score, week and screenshots.</p></div>
-          <div class="card step"><span class="n">3</span><b>Live on the site</b><p>About a minute later: score, box score, standings, leaders and the Heisman race.</p></div>
-        </div></section>`;
+    return full ? banner + `<section><div class="sh"><h2>The field</h2></div>${fieldTeams()}</section>` + howScores() : banner;
   }
 
   // ---------- box score
