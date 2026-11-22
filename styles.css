@@ -615,3 +615,48 @@ kbd { font: 600 11px var(--body); padding: 2px 6px; border-radius: 4px; border: 
 .coach-tag { color: var(--gold) !important; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: 11px !important; }
 .hero .k .role { background: rgba(255,255,255,.18); padding: 2px 8px; border-radius: 4px; letter-spacing: .1em; }
 .hero.light .k .role { background: rgba(21,18,28,.1); }
+
+/* before kickoff: banner, the field, how scores get here */
+.kickoff { position: relative; overflow: hidden; border-radius: var(--r); color: #fff; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; gap: 24px; padding: 34px 34px;
+  background: radial-gradient(120% 160% at 100% 0%, rgba(139, 92, 246, .45), transparent 55%), linear-gradient(120deg, #120e1c 0%, #1f1636 55%, #2b1a57 100%); }
+.kickoff::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 10%); -webkit-mask-image: linear-gradient(90deg, transparent, #000 40%); mask-image: linear-gradient(90deg, transparent, #000 40%); }
+.ko-text { position: relative; z-index: 1; }
+.ko-kick { display: inline-flex; align-items: center; gap: 8px; font: 600 12px var(--body); letter-spacing: .14em; text-transform: uppercase; color: #cbbcff; }
+.ko-dot { width: 8px; height: 8px; border-radius: 50%; background: #f0b429; box-shadow: 0 0 0 4px rgba(240, 180, 41, .2); animation: livepulse 1.8s infinite; }
+.kickoff h2 { font-family: var(--display); font-weight: 800; font-size: clamp(38px, 5.4vw, 64px); line-height: .92; text-transform: uppercase; margin: 10px 0 12px; }
+.kickoff p { color: #d6cff0; font-size: 16px; max-width: 44ch; }
+.ko-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.ko-btn { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 16px; border-radius: var(--r-sm); background: #fff; color: #15121c; font-weight: 700; font-size: 14px; transition: transform .2s var(--ease), background .2s; }
+.ko-btn svg { width: 16px; height: 16px; transition: transform .25s var(--ease); }
+.ko-btn:hover { transform: translateY(-1px); } .ko-btn:hover svg { transform: translateX(3px); }
+.ko-btn.ghost { background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.22); }
+.ko-btn.ghost:hover { background: rgba(255,255,255,.18); }
+.ko-art { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; justify-items: center; }
+.ko-logo { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 16px; background: rgba(255,255,255,.94); box-shadow: 0 10px 24px rgba(0,0,0,.25);
+  animation: koIn .5s var(--ease) both, koFloat 6s ease-in-out infinite; animation-delay: calc(var(--i) * 40ms), calc(var(--i) * -380ms); transition: transform .25s var(--ease); }
+.ko-logo:hover { transform: translateY(-4px) rotate(-4deg); }
+.ko-logo .mark.md { width: 46px; height: 46px; }
+@keyframes koIn { from { opacity: 0; transform: translateY(10px) scale(.9); } }
+@keyframes koFloat { 50% { translate: 0 -5px; } }
+.field { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.field-conf { overflow: hidden; }
+.field-team { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--line); transition: background .15s; }
+.field-team:last-child { border-bottom: 0; }
+.field-team:hover { background: var(--sunk); }
+.field-team .nm { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.field-team .rec { color: var(--muted); font-family: var(--display); font-weight: 700; font-size: 16px; }
+.steps3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.step { padding: 18px; }
+.step .n { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--brand); color: var(--brand-ink); font-family: var(--display); font-weight: 700; margin-bottom: 10px; }
+.step b { display: block; font-family: var(--display); font-weight: 700; font-size: 20px; text-transform: uppercase; margin-bottom: 4px; }
+.step p { color: var(--ink-2); }
+.step code { font-size: 13px; padding: 1px 5px; border-radius: 4px; background: var(--sunk); border: 1px solid var(--line); }
+@media (max-width: 1080px) { .field { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .kickoff { grid-template-columns: 1fr; padding: 26px 20px; }
+  .ko-art { grid-template-columns: repeat(8, 1fr); gap: 6px; }
+  .ko-logo { width: 36px; height: 36px; border-radius: 10px; }
+  .ko-logo .mark.md { width: 26px; height: 26px; }
+  .field, .steps3 { grid-template-columns: minmax(0, 1fr); }
+}

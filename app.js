@@ -231,7 +231,7 @@
     return page(`
       <div class="cols">${lead}${rail}</div>
       <section><div class="sh"><h2>Latest scores</h2><a class="go" href="/scores" data-link>All scores ${ARW}</a></div>
-        ${recent.length ? `<div class="games">${recent.map(gameCard).join("")}</div>` : empty("No games yet", "Scores appear here after the first game is posted.")}</section>
+        ${recent.length ? `<div class="games">${recent.map(gameCard).join("")}</div>` : kickoff(false)}</section>
       ${(D.conferences || []).length ? `<section><div class="sh"><h2>Standings</h2><a class="go" href="/standings" data-link>Full standings ${ARW}</a></div>
         <div class="confgrid">${D.conferences.map((c) => confCard(c, true)).join("")}</div></section>` : ""}
       <div class="cols-2">
@@ -347,7 +347,39 @@
     return page(`
       <div class="pagehead"><div><div class="kick">Season ${s}</div><h1>Scores</h1></div></div>
       ${weeks.length ? `<div><nav class="utabs">${weeks.map((w) => `<button class="${w === wk ? "is-on" : ""}" data-week="${esc(w)}">${esc(w)}</button>`).join("")}<span class="bar"></span></nav>
-        <div class="games" style="margin-top:16px">${list.map(gameCard).join("")}</div></div>` : empty("No games yet", "Every posted game appears here with a full box score.")}`);
+        <div class="games" style="margin-top:16px">${list.map(gameCard).join("")}</div></div>` : kickoff(true)}`);
+  }
+
+  function kickoff(full) {
+    const L = D.league;
+    const confs = (D.conferences || []).map((c) => ({ name: c.name, teams: confTeams(c) }));
+    const banner = `<section class="kickoff">
+        <div class="ko-text">
+          <div class="ko-kick"><span class="ko-dot"></span>Season ${L.season} · Week 1</div>
+          <h2>Kickoff is coming</h2>
+          <p>Every final lands here with a full box score about a minute after the refs post it. No refreshing needed.</p>
+          <div class="ko-actions">
+            <a class="ko-btn rp" href="/standings" data-link>See the standings ${ARW}</a>
+            ${L.discord ? `<a class="ko-btn ghost rp" href="#join" id="koJoin">Join the league</a>` : ""}
+          </div>
+        </div>
+        <div class="ko-art" aria-hidden="true">
+          ${confs.flatMap((c) => c.teams).slice(0, 16).map((t, i) => `<span class="ko-logo" style="--i:${i}">${mark(t.name, "md")}</span>`).join("")}
+        </div>
+      </section>`;
+    if (!full) return banner;
+    return `${banner}
+      ${confs.length ? `<section><div class="sh"><h2>The field</h2><span class="sub">16 teams · 4 conferences</span></div>
+        <div class="field">${confs.map((c) => `<div class="card field-conf">
+          <div class="conf-head"><h3>${esc(c.name)}</h3><span class="sub">${c.teams.length} teams</span></div>
+          ${c.teams.map((t) => `<a class="field-team rp" href="/team/${t.id}" data-link>${mark(t.name, "md")}<span class="nm">${esc(t.name)}</span><span class="rec">${recOf(t)}</span></a>`).join("")}
+        </div>`).join("")}</div></section>` : ""}
+      <section><div class="sh"><h2>How scores get here</h2></div>
+        <div class="steps3">
+          <div class="card step"><span class="n">1</span><b>Final whistle</b><p>The game ends in Roblox and the ref screenshots each stats tab.</p></div>
+          <div class="card step"><span class="n">2</span><b>Ref posts it</b><p>One <code>/stats</code> in Discord with the teams, score, week and screenshots.</p></div>
+          <div class="card step"><span class="n">3</span><b>Live on the site</b><p>About a minute later: score, box score, standings, leaders and the Heisman race.</p></div>
+        </div></section>`;
   }
 
   // ---------- box score
@@ -639,6 +671,7 @@
     setTimeout(() => $("#joinGo").focus(), 30);
   }
   $("#discordBtn").addEventListener("click", openJoin);
+  document.addEventListener("click", (e) => { if (e.target.closest("#koJoin")) openJoin(e); });
   $("#ftDiscord").addEventListener("click", openJoin);
   $("#joinClose").addEventListener("click", closeOverlays);
   joinBox.addEventListener("click", (e) => { if (e.target === joinBox) closeOverlays(); });
