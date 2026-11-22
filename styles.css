@@ -604,3 +604,7 @@ kbd { font: 600 11px var(--body); padding: 2px 6px; border-radius: 4px; border: 
 @keyframes livepulse { 0% { box-shadow: 0 0 0 0 rgba(60, 207, 131, .6); } 70% { box-shadow: 0 0 0 7px rgba(60, 207, 131, 0); } 100% { box-shadow: 0 0 0 0 rgba(60, 207, 131, 0); } }
 @keyframes bump { 40% { transform: scale(1.35); } }
 @media (max-width: 640px) { .live { height: 28px; padding: 0 9px; } .live-word { display: none; } }
+
+/* counter sits in the top-left corner, beside the logo */
+.mh-inner > .live { margin-left: -14px; flex: none; }
+@media (max-width: 900px) { .mh-inner > .live { margin-left: 0; align-self: center; margin-bottom: 8px; } }
