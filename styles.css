@@ -608,3 +608,4 @@ kbd { font: 600 11px var(--body); padding: 2px 6px; border-radius: 4px; border: 
 /* counter sits in the top-left corner, beside the logo */
 .mh-inner > .live { margin-left: -14px; flex: none; }
 @media (max-width: 900px) { .mh-inner > .live { margin-left: 0; align-self: center; margin-bottom: 8px; } }
+@media (max-width: 480px) { .brand-word { display: none; } .mh-inner { gap: 8px; } .join { padding: 0 9px !important; } }
