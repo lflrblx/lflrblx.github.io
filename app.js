@@ -104,8 +104,9 @@
       strip.innerHTML = `<div class="strip-inner"><div class="strip-empty">${esc(L.name)} Season ${L.season} · no games posted yet</div></div>`;
     }
     if (L.discord) {
-      const dc = $("#discordBtn"); dc.href = L.discord; dc.hidden = false;
-      const fd = $("#ftDiscord"); fd.href = L.discord; fd.hidden = false;
+      $("#discordBtn").hidden = false;
+      $("#ftDiscord").hidden = false;
+      $("#joinGo").href = L.discord;
     }
     $("#updated").textContent = `Stats update automatically after every game. Last update ${ago(L.updated)}.`;
     if (L.demo && !$(".demo-flag")) document.body.insertAdjacentHTML("beforeend", `<div class="demo-flag">DEMO DATA</div>`);
@@ -620,7 +621,26 @@
     if (e.key === "Escape") closeOverlays();
     if ((e.key === "/" || (e.key === "k" && (e.ctrlKey || e.metaKey))) && !/input|textarea|select/i.test(document.activeElement.tagName)) { e.preventDefault(); openSearch(); }
   });
-  function closeOverlays() { sheet.hidden = true; search.hidden = true; moreBtn.setAttribute("aria-expanded", "false"); }
+  function closeOverlays() { sheet.hidden = true; search.hidden = true; joinBox.hidden = true; moreBtn.setAttribute("aria-expanded", "false"); }
+
+  // "Join the league" pop-up: steps + the Discord invite
+  const joinBox = $("#joinBox");
+  function openJoin(e) {
+    if (e) e.preventDefault();
+    if (!D || !D.league.discord) return;
+    closeOverlays();
+    joinBox.hidden = false;
+    setTimeout(() => $("#joinGo").focus(), 30);
+  }
+  $("#discordBtn").addEventListener("click", openJoin);
+  $("#ftDiscord").addEventListener("click", openJoin);
+  $("#joinClose").addEventListener("click", closeOverlays);
+  joinBox.addEventListener("click", (e) => { if (e.target === joinBox) closeOverlays(); });
+  $("#joinCopy").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(D.league.discord); toast("Invite link copied"); }
+    catch (err) { toast(D.league.discord); }
+  });
+  if (location.hash === "#join") setTimeout(() => openJoin(), 400);
 
   // ------------------------------------------------------------ theme
   $("#themeBtn").addEventListener("click", () => {
