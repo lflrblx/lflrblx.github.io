@@ -414,7 +414,7 @@
     const confs = (D.conferences || []).map((c) => ({ name: c.name, teams: confTeams(c) }));
     const banner = `<section class="kickoff">
         <div class="ko-text">
-          <div class="ko-kick"><span class="ko-dot"></span>Season ${L.season} · Week 1</div>
+          <div class="ko-kick"><span class="ko-dot"></span>Season ${L.season} · Series 1</div>
           <h2>Kickoff is coming</h2>
           <p>Every final lands here with a full box score about a minute after the refs post it. No refreshing needed.</p>
           <div class="ko-actions">
