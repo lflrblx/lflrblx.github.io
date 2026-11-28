@@ -404,7 +404,7 @@
     return `<section><div class="sh"><h2>How scores get here</h2></div>
         <div class="steps3">
           <div class="card step"><span class="n">1</span><b>Final whistle</b><p>The game ends in Roblox and the ref screenshots each stats tab.</p></div>
-          <div class="card step"><span class="n">2</span><b>Ref posts it</b><p>One <code>/stats</code> in Discord with the teams, score, week and screenshots.</p></div>
+          <div class="card step"><span class="n">2</span><b>Ref posts it</b><p>One <code>/game</code> in Discord with the teams, score and week. The stats come straight from the game.</p></div>
           <div class="card step"><span class="n">3</span><b>Live on the site</b><p>About a minute later: score, box score, standings, leaders and the Heisman race.</p></div>
         </div></section>`;
   }
